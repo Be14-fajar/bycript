@@ -1,0 +1,360 @@
+openapi: 3.0.3
+info:
+  title: testing
+  description: |-
+    testing aja bro
+
+    ya testing
+  contact:
+    name: fajar
+    email: frizky861@gmail.com
+    
+  version: 1.0.0
+servers:
+  - url: https://testing1.com
+    description: testing1
+  - url: https://testing2.com
+    description: testing2
+  - url: https://testing3.com/{versi}
+    variables: 
+      versi:
+        default: v1
+        enum:
+          - v1
+          - v2
+          - v3
+tags:
+  - name: User
+  - name: Todo
+paths:
+  /hello:
+    get:
+      responses:
+        200:
+          description: succes 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  massage:
+                    type: string
+              example:
+                massage: "testing"
+  /users:
+    get:
+      tags:
+        - "User"
+      description: "melihat all user"
+      summary: "all user"
+      parameters:
+        - name: id
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: "all user"
+          content:
+            application/json:
+              schema:  
+                $ref: '#/components/schemas/responseObjectArr'
+              example:
+                data:
+                  - id: 1
+                    nama: fajar
+                    email: frizky861@gmail.com
+                    Alamat: jakarta
+                  - id: 2
+                    nama: demian
+                    email: demian@gmail.com
+                    Alamat: bandung
+        404:
+          description: "data tidak ditemukan"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "fail not found"
+        400:
+          $ref: '#/components/responses/400'
+
+  /users/{:id}:
+   delete:
+      tags:
+        - "User"
+      description: "Delete USER BY ID"
+      summary: "delete by id"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        200:
+          description: "Delete User"
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                status: "success"
+                massage: "Delete Success"
+        404:
+          description: "data tidak ditemukan"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "fail not found"
+
+        400:
+          $ref: '#/components/responses/400'
+   put:
+      tags:
+        - "User"
+      description: "UPDATE USER BY ID"
+      summary: "update by id"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nama: 
+                  type: string
+                password: 
+                  type: string
+                  format: password
+                email:
+                  type: string
+                  format: email
+            example:
+                  id: 1
+                  nama: fajar
+                  email: frizky861@gmail.com
+      responses:
+        200:
+          description: "data profile adalah"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseObject'
+              example:
+                data:
+                  id: 1
+                  nama: fajri
+                  email: frizky861@gmail.com
+                message: "succes update"
+        404:
+          description: "data tidak ditemukan"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "fail not found"
+
+        400:
+          $ref: '#/components/responses/400' 
+
+  /users/{id}:
+    get:
+      tags:
+        - "User"
+      description: "untuk melihat profil berdasarkan ID tertentu"
+      summary: "lihat profile"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: "data profile adalah"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseObject'
+              example:
+                data:
+                  id: 1
+                  nama: fajar
+                  email: frizky861@gmail.com
+                message: "data terbaca"
+        404:
+          description: "data tidak ditemukan"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "fail not found"
+
+  /users/register:
+    post:
+      tags:
+        - "User"
+      description: post
+      summary: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nama:
+                  type: string
+                tgl_lhr:
+                  type: string
+                  format: date
+                hp: 
+                  type: string
+                email:
+                  type: string
+                  format: email
+                alamat:
+                  type: array
+                  items:
+                    type: string
+                contact:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      nama:
+                        type: string
+                      hubungan:
+                        type: string
+
+            example:
+              nama: fajar
+              tgl_lhr: "2023-01-01"
+              hp: "0873232332"
+              email: frizky861@gmail.com
+              alamat:
+                - surabaya:
+                - pasuruan:
+              contact:
+                - nama : toni
+                  hubungan: saudara
+                - nama: budi
+                  hubungan: ayah
+      responses:
+        200:
+          description: 'succes insert'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseObject'
+              example:
+                data:
+                  nama: fajar
+                  email: frizky861@gmail.com
+                massage: "register berhasil"
+        400:
+          $ref: '#/components/responses/400'
+        500: 
+          $ref: '#/components/responses/500'
+
+  /users/login:
+    post: 
+      tags:
+        - "User"
+      description: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        200:
+          description: "succes login"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseObject'
+              example:
+                data:
+                  id: 1
+                  nama: fajar
+                  email: frizky@gmail.com
+                massage: "Login Success"
+        400:
+          $ref: '#/components/responses/400'
+        500:
+          $ref: '#/components/responses/500'
+components:
+  schemas:
+    responseObject:
+      type: object
+      properties:
+        data:
+          type: object
+        massage: 
+          type: string
+    responseObjectArr:
+      type: object
+      properties:
+        data:
+          type: array
+          items: 
+            type: object
+        massage:
+          type: string
+  responses:
+    400:
+      description: "user fail"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              massage:
+                type: string
+          example:
+            massage: "wrong input user"
+    500:
+      description: "Kesalahan dari server"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              massage:
+                type: string
+          example:
+            massage: "data tidak bisa diolah"
